@@ -1,0 +1,11 @@
+app:
+   concurrent-consumers: 10
+   base-dir: ${HOMEPATH:/home}
+   input-dir: ${app.base-dir}/data/in
+   output-dir: ${app.base-dir}/data/out
+   allowed-file-extensions:  >
+      dat
+
+logging:
+   level:
+      br.com.otavio.data.analysis: DEBUG
