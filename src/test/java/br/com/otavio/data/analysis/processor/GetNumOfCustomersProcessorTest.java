@@ -16,21 +16,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.otavio.data.analysis.Headers;
 import br.com.otavio.data.analysis.entity.Customer;
-import br.com.otavio.data.analysis.entity.InputFileData;
+import br.com.otavio.data.analysis.entity.GroupedData;
 
 @ExtendWith(MockitoExtension.class)
 public class GetNumOfCustomersProcessorTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
-	private @Mock InputFileData data;
+	private @Mock GroupedData data;
 
 	private Processor processor;
 
 	@BeforeEach
 	public void setup() {
 		when(exchange.getIn()).thenReturn(in);
-		when(in.getBody(InputFileData.class)).thenReturn(data);
+		when(in.getBody(GroupedData.class)).thenReturn(data);
 		processor = new GetNumOfCustomersProcessor();
 	}
 

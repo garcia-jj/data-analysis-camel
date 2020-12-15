@@ -2,13 +2,13 @@ package br.com.otavio.data.analysis.entity;
 
 import java.util.List;
 
-public class InputFileData {
+public class GroupedData {
 
 	private final List<Customer> customers;
 	private final List<Sale> sales;
 	private final List<Salesman> salesmen;
 
-	public InputFileData(final List<Customer> customers, final List<Sale> sales, final List<Salesman> salesmen) {
+	public GroupedData(final List<Customer> customers, final List<Sale> sales, final List<Salesman> salesmen) {
 		this.customers = customers;
 		this.sales = sales;
 		this.salesmen = salesmen;

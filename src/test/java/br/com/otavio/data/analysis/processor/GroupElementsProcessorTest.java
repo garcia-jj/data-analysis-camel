@@ -1,13 +1,10 @@
 package br.com.otavio.data.analysis.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -22,26 +19,34 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.otavio.data.analysis.entity.Customer;
-import br.com.otavio.data.analysis.entity.InputFileData;
+import br.com.otavio.data.analysis.entity.GroupedData;
 import br.com.otavio.data.analysis.entity.Sale;
+import br.com.otavio.data.analysis.entity.SaleItem;
 import br.com.otavio.data.analysis.entity.Salesman;
 
 @ExtendWith(MockitoExtension.class)
-public class ParseFileDataProcessorTest {
+public class GroupElementsProcessorTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
-	private @Captor ArgumentCaptor<InputFileData> data;
+	private @Captor ArgumentCaptor<GroupedData> data;
 
 	private Processor processor;
 
 	@BeforeEach
 	public void setup() throws Exception {
 		when(exchange.getIn()).thenReturn(in);
-		processor = new ParseFileDataProcessor();
+		processor = new GroupElementsProcessor();
 
-		final URL filePath = getClass().getClassLoader().getResource("example-to-import.dat");
-		doReturn(Paths.get(filePath.toURI()).toString()).when(in).getHeader(Exchange.FILE_PATH, String.class);
+		List<Object> records = List.of(
+				new Salesman("1234A", "Salesman 1", new BigDecimal("1")),
+				new Salesman("5678A", "Salesman 2", new BigDecimal("2")), new Customer("1234B", "Customer 1", "A"),
+				new Customer("5678B", "Customer 2", "B"),
+				new Sale("10", List.of(new SaleItem("1", 10, new BigDecimal("100"))), "Pedro"),
+				new Sale("08", List.of(new SaleItem("2", 20, new BigDecimal("200"))), "Paulo")
+		);
+
+		when(in.getBody(List.class)).thenReturn(records);
 	}
 
 	@Test
@@ -54,15 +59,15 @@ public class ParseFileDataProcessorTest {
 		assertThat(customers).hasSize(2);
 
 		assertThat(customers).first().satisfies(e -> {
-			assertThat(e.getCnpj()).isEqualTo("2345675434544345");
-			assertThat(e.getName()).isEqualTo("Jose da Silva");
-			assertThat(e.getBusinessArea()).isEqualTo("Rural");
+			assertThat(e.getCnpj()).isEqualTo("1234B");
+			assertThat(e.getName()).isEqualTo("Customer 1");
+			assertThat(e.getBusinessArea()).isEqualTo("A");
 		});
 
 		assertThat(customers).last().satisfies(e -> {
-			assertThat(e.getCnpj()).isEqualTo("2345675433444345");
-			assertThat(e.getName()).isEqualTo("Eduardo Pereira");
-			assertThat(e.getBusinessArea()).isEqualTo("Rural");
+			assertThat(e.getCnpj()).isEqualTo("5678B");
+			assertThat(e.getName()).isEqualTo("Customer 2");
+			assertThat(e.getBusinessArea()).isEqualTo("B");
 		});
 	}
 
@@ -76,15 +81,15 @@ public class ParseFileDataProcessorTest {
 		assertThat(salesmen).hasSize(2);
 
 		assertThat(salesmen).first().satisfies(e -> {
-			assertThat(e.getCpf()).isEqualTo("1234567891234");
-			assertThat(e.getName()).isEqualTo("Pedro");
-			assertThat(e.getSalary()).isEqualByComparingTo(new BigDecimal("50000"));
+			assertThat(e.getCpf()).isEqualTo("1234A");
+			assertThat(e.getName()).isEqualTo("Salesman 1");
+			assertThat(e.getSalary()).isEqualByComparingTo(new BigDecimal("1"));
 		});
 
 		assertThat(salesmen).last().satisfies(e -> {
-			assertThat(e.getCpf()).isEqualTo("3245678865434");
-			assertThat(e.getName()).isEqualTo("Paulo");
-			assertThat(e.getSalary()).isEqualByComparingTo(new BigDecimal("40000.99"));
+			assertThat(e.getCpf()).isEqualTo("5678A");
+			assertThat(e.getName()).isEqualTo("Salesman 2");
+			assertThat(e.getSalary()).isEqualByComparingTo(new BigDecimal("2"));
 		});
 	}
 
@@ -101,47 +106,23 @@ public class ParseFileDataProcessorTest {
 			assertThat(e.getId()).isEqualTo("10");
 			assertThat(e.getSalesmanName()).isEqualTo("Pedro");
 
-			assertThat(e.getItems()).hasSize(3);
-			assertThat(e.getItems()).element(0).satisfies(i -> {
+			assertThat(e.getItems()).hasSize(1);
+			assertThat(e.getItems()).first().satisfies(i -> {
 				assertThat(i.getId()).isEqualTo("1");
 				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("100"));
 				assertThat(i.getQuantity()).isEqualTo(10);
 			});
 
-			assertThat(e.getItems()).element(1).satisfies(i -> {
-				assertThat(i.getId()).isEqualTo("2");
-				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("2.5"));
-				assertThat(i.getQuantity()).isEqualTo(30);
-			});
-
-			assertThat(e.getItems()).element(2).satisfies(i -> {
-				assertThat(i.getId()).isEqualTo("3");
-				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("3.10"));
-				assertThat(i.getQuantity()).isEqualTo(40);
-			});
 		});
-
 		assertThat(sales).last().satisfies(e -> {
 			assertThat(e.getId()).isEqualTo("08");
 			assertThat(e.getSalesmanName()).isEqualTo("Paulo");
 
-			assertThat(e.getItems()).hasSize(3);
-			assertThat(e.getItems()).element(0).satisfies(i -> {
-				assertThat(i.getId()).isEqualTo("1");
-				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("10"));
-				assertThat(i.getQuantity()).isEqualTo(34);
-			});
-
-			assertThat(e.getItems()).element(1).satisfies(i -> {
+			assertThat(e.getItems()).hasSize(1);
+			assertThat(e.getItems()).first().satisfies(i -> {
 				assertThat(i.getId()).isEqualTo("2");
-				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("1.5"));
-				assertThat(i.getQuantity()).isEqualTo(33);
-			});
-
-			assertThat(e.getItems()).element(2).satisfies(i -> {
-				assertThat(i.getId()).isEqualTo("3");
-				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("0.1"));
-				assertThat(i.getQuantity()).isEqualTo(40);
+				assertThat(i.getPrice()).isEqualByComparingTo(new BigDecimal("200"));
+				assertThat(i.getQuantity()).isEqualTo(20);
 			});
 		});
 	}

@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.otavio.data.analysis.Headers;
-import br.com.otavio.data.analysis.entity.InputFileData;
+import br.com.otavio.data.analysis.entity.GroupedData;
 import br.com.otavio.data.analysis.entity.Salesman;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,14 +24,14 @@ public class GetNumOfSalesmenProcessorTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
-	private @Mock InputFileData data;
+	private @Mock GroupedData data;
 
 	private Processor processor;
 
 	@BeforeEach
 	public void setup() {
 		when(exchange.getIn()).thenReturn(in);
-		when(in.getBody(InputFileData.class)).thenReturn(data);
+		when(in.getBody(GroupedData.class)).thenReturn(data);
 		processor = new GetNumOfSalesmenProcessor();
 	}
 
