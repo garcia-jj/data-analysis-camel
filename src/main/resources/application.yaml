@@ -3,6 +3,7 @@ app:
    base-dir: ${HOMEPATH:/home}
    input-dir: ${app.base-dir}/data/in
    output-dir: ${app.base-dir}/data/out
+   charset: UTF-8
    allowed-file-extensions:  >
       dat
 

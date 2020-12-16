@@ -31,7 +31,7 @@ public class FileProcessingRoute extends RouteBuilder {
 
 	@Override
 	public void configure() throws Exception {
-		from("file:{{app.input-dir}}")
+		from("file:{{app.input-dir}}?charset={{app.charset}}")
 			.filter(new FileExtensionFilter(extensions))
 			.log(INFO, LOGGER, "[${header.CamelFileName}] A new file has been received")
 			.log(DEBUG, LOGGER, "[${header.CamelFileName}] File content is ${body}")
