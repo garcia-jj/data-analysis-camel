@@ -16,7 +16,7 @@ public class ParserTest {
 	@Test
 	public void shouldFailWhenLineHasntBeenRecognized() {
 		final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			Parser.from("UNKNOW");
+			ParserFactory.from("UNKNOW");
 		});
 
 		assertThat(exception.getMessage()).isEqualTo("Unknow type: UNKNOW");
@@ -25,7 +25,7 @@ public class ParserTest {
 	@Test
 	public void shouldFailWhenLineHasntBeenRecognizedNullSafe() {
 		final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			Parser.from(null);
+			ParserFactory.from(null);
 		});
 
 		assertThat(exception.getMessage()).isEqualTo("Unknow type: null");
@@ -33,7 +33,7 @@ public class ParserTest {
 
 	@Test
 	public void shouldParse001AsSalesman() {
-		final Object entity = Parser.from("001").parse("001\u00E71234567891234\u00E7Pedro\u00E750000");
+		final Object entity = ParserFactory.from("001").parse("001\u00E71234567891234\u00E7Pedro\u00E750000");
 
 		assertThat(entity).satisfies(e -> {
 			assertThat(e).isInstanceOf(Salesman.class);
@@ -45,7 +45,7 @@ public class ParserTest {
 
 	@Test
 	public void shouldParse002AsCustomer() {
-		final Object entity = Parser.from("002").parse("002\u00E72345675434544345\u00E7Jose da Silva\u00E7Rural");
+		final Object entity = ParserFactory.from("002").parse("002\u00E72345675434544345\u00E7Jose da Silva\u00E7Rural");
 
 		assertThat(entity).satisfies(e -> {
 			assertThat(e).isInstanceOf(Customer.class);
@@ -57,7 +57,7 @@ public class ParserTest {
 
 	@Test
 	public void shouldParse003AsSale() {
-		final Object entity = Parser.from("003").parse("003\u00E710\u00E7[1-10-100,2-30-2.50,3-40-3.10]\u00E7Pedro");
+		final Object entity = ParserFactory.from("003").parse("003\u00E710\u00E7[1-10-100,2-30-2.50,3-40-3.10]\u00E7Pedro");
 
 		assertThat(entity).satisfies(e -> {
 			assertThat(e).isInstanceOf(Sale.class);
