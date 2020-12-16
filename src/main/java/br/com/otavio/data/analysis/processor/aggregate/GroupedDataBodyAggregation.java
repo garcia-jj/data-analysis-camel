@@ -1,4 +1,4 @@
-package br.com.otavio.data.analysis.processor;
+package br.com.otavio.data.analysis.processor.aggregate;
 
 import static java.util.stream.Collectors.toList;
 
@@ -7,17 +7,22 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 
 import br.com.otavio.data.analysis.entity.Customer;
 import br.com.otavio.data.analysis.entity.GroupedData;
 import br.com.otavio.data.analysis.entity.Sale;
 import br.com.otavio.data.analysis.entity.Salesman;
 
-public class GroupElementsProcessor implements Processor {
+public class GroupedDataBodyAggregation extends GroupedBodyAggregationStrategy {
 
 	@Override
-	public void process(final Exchange exchange) throws Exception {
+	public void onCompletion(Exchange exchange) {
+		super.onCompletion(exchange);
+		doAggregate(exchange);
+	}
+
+	protected void doAggregate(Exchange exchange) {
 		final List<?> elements = exchange.getIn().getBody(List.class);
 
 		final List<Customer> customers = elements.stream().filter(isCustomer()).map(toCustomer()).collect(toList());

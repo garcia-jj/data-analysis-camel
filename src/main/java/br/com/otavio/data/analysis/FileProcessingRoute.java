@@ -6,7 +6,6 @@ import static org.apache.camel.LoggingLevel.INFO;
 import java.util.Set;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.support.builder.ValueBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,8 @@ import br.com.otavio.data.analysis.processor.GetMostExpensiveSaleProcessor;
 import br.com.otavio.data.analysis.processor.GetNumOfCustomersProcessor;
 import br.com.otavio.data.analysis.processor.GetNumOfSalesmenProcessor;
 import br.com.otavio.data.analysis.processor.GetWorstSalesmenProcessor;
-import br.com.otavio.data.analysis.processor.GroupElementsProcessor;
 import br.com.otavio.data.analysis.processor.ParseSingleLineProcessor;
+import br.com.otavio.data.analysis.processor.aggregate.GroupedDataBodyAggregation;
 
 @Component
 public class FileProcessingRoute extends RouteBuilder {
@@ -42,13 +41,13 @@ public class FileProcessingRoute extends RouteBuilder {
 		from("seda:asyncFileProcess?concurrentConsumers={{app.concurrent-consumers}}")
 			.log(INFO, LOGGER, "Starting to process file: ${header.CamelFileName}")
 			
-			.split(bodyTokenizedByNewLines(), new GroupedBodyAggregationStrategy())
-				.streaming().parallelProcessing().stopOnAggregateException()
+			.split(bodyTokenizedByNewLines(), new GroupedDataBodyAggregation())
+				.streaming()
+				.parallelProcessing()
+				.stopOnAggregateException()
 				.process(new ParseSingleLineProcessor())
 				.log(DEBUG, LOGGER, "Processing line ${body}")
 			.end()
-
-			.process(new GroupElementsProcessor())
 
 			.process(new GetNumOfCustomersProcessor())
 			.log(DEBUG, LOGGER, "[${header.CamelFileName}] GetNumOfCustomers done with ${header.NUM_OF_CUSTOMERS}")

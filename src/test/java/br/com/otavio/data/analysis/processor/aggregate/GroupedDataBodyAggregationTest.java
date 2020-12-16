@@ -1,4 +1,4 @@
-package br.com.otavio.data.analysis.processor;
+package br.com.otavio.data.analysis.processor.aggregate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,18 +24,18 @@ import br.com.otavio.data.analysis.entity.SaleItem;
 import br.com.otavio.data.analysis.entity.Salesman;
 
 @ExtendWith(MockitoExtension.class)
-public class GroupElementsProcessorTest {
+public class GroupedDataBodyAggregationTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
 	private @Captor ArgumentCaptor<GroupedData> data;
 
-	private Processor processor;
+	private GroupedDataBodyAggregation aggregation;
 
 	@BeforeEach
 	public void setup() throws Exception {
 		when(exchange.getIn()).thenReturn(in);
-		processor = new GroupElementsProcessor();
+		aggregation = new GroupedDataBodyAggregation();
 
 		List<Object> records = List.of(
 				new Salesman("1234A", "Salesman 1", new BigDecimal("1")),
@@ -51,7 +50,7 @@ public class GroupElementsProcessorTest {
 
 	@Test
 	public void shouldLoadCustomerEntries() throws Exception {
-		processor.process(exchange);
+		aggregation.doAggregate(exchange);
 
 		verify(in).setBody(data.capture());
 
@@ -73,7 +72,7 @@ public class GroupElementsProcessorTest {
 
 	@Test
 	public void shouldLoadSalesmanEntries() throws Exception {
-		processor.process(exchange);
+		aggregation.doAggregate(exchange);
 
 		verify(in).setBody(data.capture());
 
@@ -95,7 +94,7 @@ public class GroupElementsProcessorTest {
 
 	@Test
 	public void shouldLoadSalesEntries() throws Exception {
-		processor.process(exchange);
+		aggregation.doAggregate(exchange);
 
 		verify(in).setBody(data.capture());
 
