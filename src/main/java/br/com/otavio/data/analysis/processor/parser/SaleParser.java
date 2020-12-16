@@ -10,15 +10,14 @@ import java.util.stream.Stream;
 import br.com.otavio.data.analysis.entity.Sale;
 import br.com.otavio.data.analysis.entity.SaleItem;
 
-public class SaleParser implements Parser<Sale> {
+public class SaleParser extends AbstractLineParser implements Parser<Sale> {
 
-	private static final String RECORD_DELIMITER = "\u00E7";
 	private static final String ITEM_DELIMITER = ",";
 	private static final String ITEM_COLUMN_DELIMITER = "-";
 
 	@Override
 	public Sale parse(final String line) {
-		final String[] pairs = line.split(RECORD_DELIMITER);
+		final String[] pairs = parseLine(line);
 		final List<SaleItem> items = parseItems(pairs[2]);
 		return new Sale(pairs[1], items, pairs[3]);
 	}
