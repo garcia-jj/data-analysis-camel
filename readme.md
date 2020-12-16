@@ -10,23 +10,28 @@ The input file have this layout:
 
 |          | Layout                                                        | Example                                    |
 |----------|---------------------------------------------------------------|--------------------------------------------|
-| Salesman | 001ÁCPFÁNameÁSalary                                           | 001Á1234567891234ÁJo„oÁ50000               |
-| Customer | 002ÁCNPJÁNameÁBusiness Area                                   | 002Á2345675434544345ÁJose SilvaÁRural      |
-| Sale     | x003ÁSale IDÁ[Item ID-Item Quantity-Item Price]ÁSalesman name | 003Á10Á[1-10-100,2-30-2.50,3-40-3.10]ÁJo„o |
+| Salesman | 001√ßCPF√ßName√ßSalary                                           | 001√ß1234567891234√ßJo√£o√ß50000               |
+| Customer | 002√ßCNPJ√ßName√ßBusiness Area                                   | 002√ß2345675434544345√ßJose Silva√ßRural      |
+| Sale     | x003√ßSale ID√ß[Item ID-Item Quantity-Item Price]√ßSalesman name | 003√ß10√ß[1-10-100,2-30-2.50,3-40-3.10]√ßJo√£o |
 
 And the output have this layout:
 
 | Layout                                                                    | Example  |
 |---------------------------------------------------------------------------|----------|
-| Number of customersÁNumber of salesmenÁMost expensive saleÁWorst salesman | 3Á2Á10Á5 |
+| Number of customers√ßNumber of salesmen√ßMost expensive sale√ßWorst salesman | 3√ß2√ß10√ß5 |
 
 
 ## How to build and run
 
 This project uses Gradle as dependency management tool. So, to create an executable jar you can just run `./gradlew build`, and the executable jar will be created at `build/libs` directory. To run the application you just need to do a double click at the executable jar, or just run within a console with the command `./data-analysis-camel-0.0.1-SNAPSHOT.jar`.
 
+## Docker
+
 Docker is available. To create docker image you just need to execute `./gradlew bootBuildImage`. A docker image will be published over `data-analysis-camel` name. To run the image you just need to type `docker run data-analysis-camel` command.
 
-## Configuration
+By default, docker will try to process all files over `/home` directory. So you can create a volume to customize this location. In that case the following command will configure the application to keep the eyes on the directory `/opt/data-analysis-directory`:
 
-TODO
+```
+docker run data-analysis-camel -v /opt/data-analysis-directory:/home 
+```
+
