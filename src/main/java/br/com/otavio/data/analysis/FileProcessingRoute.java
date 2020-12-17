@@ -64,7 +64,7 @@ public class FileProcessingRoute extends RouteBuilder {
 			.process(new FormatOutputProcessor())
 			.log(INFO, LOGGER, "[${header.CamelFileName}] The output has been created")
 
-			.toD("file:{{app.output-dir}}?fileName=${file:name.noext}.done.dat")
+			.toD("file:{{app.output-dir}}?fileName=${file:name.noext}.done.${file:name.ext}")
 			.log(INFO, LOGGER, "[${header.CamelFileName}] Done writing file to ${header.CamelFileNameProduced}")
 			.log(DEBUG, LOGGER, "[${header.CamelFileName}] File content wrote is ${body}");
 	}
