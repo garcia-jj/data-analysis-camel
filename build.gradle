@@ -49,6 +49,6 @@ test {
 	}
 }
 
-//bootJar {
-//	launchScript()
-//}
+bootBuildImage {
+	imageName = "otavio.com.br/data-analysis-camel"
+}
