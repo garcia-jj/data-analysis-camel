@@ -1,6 +1,6 @@
 app:
    concurrent-consumers: 10
-   base-dir: ${HOMEPATH:/home}
+   base-dir: ${user.home}
    input-dir: ${app.base-dir}/data/in
    output-dir: ${app.base-dir}/data/out
    charset: UTF-8
