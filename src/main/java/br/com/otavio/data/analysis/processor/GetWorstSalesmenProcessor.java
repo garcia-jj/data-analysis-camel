@@ -23,9 +23,9 @@ public class GetWorstSalesmenProcessor implements Processor {
 		final GroupedData records = exchange.getIn().getBody(GroupedData.class);
 		final Map<String, BigDecimal> salesmanSales = new LinkedHashMap<>();
 
-		for (final Sale sale : records.getSales()) {
-			final BigDecimal val = sale.getItems().stream().map(sumItems()).reduce(BigDecimal.ZERO, BigDecimal::add);
-			salesmanSales.compute(sale.getSalesmanName(), (k, v) -> v == null ? val : v.add(val));
+		for (final Sale sale : records.sales()) {
+			final BigDecimal val = sale.items().stream().map(sumItems()).reduce(BigDecimal.ZERO, BigDecimal::add);
+			salesmanSales.compute(sale.salesmanName(), (k, v) -> v == null ? val : v.add(val));
 		}
 
 		final Entry<String, BigDecimal> worstSalesman = salesmanSales.entrySet().stream().min(byMapValue())
@@ -39,6 +39,6 @@ public class GetWorstSalesmenProcessor implements Processor {
 	}
 
 	private static Function<SaleItem, BigDecimal> sumItems() {
-		return $ -> $.getPrice().multiply(BigDecimal.valueOf($.getQuantity()));
+		return $ -> $.price().multiply(BigDecimal.valueOf($.quantity()));
 	}
 }

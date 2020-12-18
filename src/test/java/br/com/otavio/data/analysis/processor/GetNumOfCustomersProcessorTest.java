@@ -23,23 +23,22 @@ public class GetNumOfCustomersProcessorTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
-	private @Mock GroupedData data;
 
 	private Processor processor;
 
 	@BeforeEach
 	public void setup() {
+		final Customer customer1 = new Customer("A", "B", "C");
+		final Customer customer2 = new Customer("D", "E", "F");
+
+		when(in.getBody(GroupedData.class)).thenReturn(new GroupedData(List.of(customer1, customer2), List.of(), List.of()));
+
 		when(exchange.getIn()).thenReturn(in);
-		when(in.getBody(GroupedData.class)).thenReturn(data);
 		processor = new GetNumOfCustomersProcessor();
 	}
 
 	@Test
 	public void shouldSetResultIntoHeader() throws Exception {
-		final Customer customer1 = new Customer("A", "B", "C");
-		final Customer customer2 = new Customer("D", "E", "F");
-		when(data.getCustomers()).thenReturn(List.of(customer1, customer2));
-
 		processor.process(exchange);
 
 		verify(in).setHeader(Headers.NUM_OF_CUSTOMERS, 2);

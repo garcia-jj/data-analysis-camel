@@ -19,7 +19,7 @@ public class GetMostExpensiveSaleProcessor implements Processor {
 	public void process(final Exchange exchange) throws Exception {
 		final GroupedData records = exchange.getIn().getBody(GroupedData.class);
 
-		final String mostExpensiveSale = records.getSales().stream().max(bySaleAmount()).map(Sale::getId)
+		final String mostExpensiveSale = records.sales().stream().max(bySaleAmount()).map(Sale::id)
 				.orElseThrow(() -> new NoSuchElementException("Unable to found the most expensive sale"));
 
 		exchange.getIn().setHeader(Headers.MOST_EXPENSIVE_SALE, mostExpensiveSale);
@@ -27,14 +27,14 @@ public class GetMostExpensiveSaleProcessor implements Processor {
 
 	public static final Comparator<Sale> bySaleAmount() {
 		return (o1, o2) -> {
-			final BigDecimal amount1 = o1.getItems().stream().map(sumItems()).reduce(BigDecimal.ZERO, BigDecimal::add);
-			final BigDecimal amount2 = o2.getItems().stream().map(sumItems()).reduce(BigDecimal.ZERO, BigDecimal::add);
+			final BigDecimal amount1 = o1.items().stream().map(sumItems()).reduce(BigDecimal.ZERO, BigDecimal::add);
+			final BigDecimal amount2 = o2.items().stream().map(sumItems()).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 			return amount1.compareTo(amount2);
 		};
 	}
 
 	private static Function<SaleItem, BigDecimal> sumItems() {
-		return $ -> $.getPrice().multiply(BigDecimal.valueOf($.getQuantity()));
+		return $ -> $.price().multiply(BigDecimal.valueOf($.quantity()));
 	}
 }

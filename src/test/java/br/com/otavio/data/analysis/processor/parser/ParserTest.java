@@ -37,9 +37,9 @@ public class ParserTest {
 
 		assertThat(entity).satisfies(e -> {
 			assertThat(e).isInstanceOf(Salesman.class);
-			assertThat(((Salesman) e).getCpf()).isEqualTo("1234567891234");
-			assertThat(((Salesman) e).getName()).isEqualTo("Pedro");
-			assertThat(((Salesman) e).getSalary()).isEqualByComparingTo(new BigDecimal("50000"));
+			assertThat(((Salesman) e).cpf()).isEqualTo("1234567891234");
+			assertThat(((Salesman) e).name()).isEqualTo("Pedro");
+			assertThat(((Salesman) e).salary()).isEqualByComparingTo(new BigDecimal("50000"));
 		});
 	}
 
@@ -49,9 +49,9 @@ public class ParserTest {
 
 		assertThat(entity).satisfies(e -> {
 			assertThat(e).isInstanceOf(Customer.class);
-			assertThat(((Customer) e).getCnpj()).isEqualTo("2345675434544345");
-			assertThat(((Customer) e).getName()).isEqualTo("Jose da Silva");
-			assertThat(((Customer) e).getBusinessArea()).isEqualTo("Rural");
+			assertThat(((Customer) e).cnpj()).isEqualTo("2345675434544345");
+			assertThat(((Customer) e).name()).isEqualTo("Jose da Silva");
+			assertThat(((Customer) e).businessArea()).isEqualTo("Rural");
 		});
 	}
 
@@ -61,25 +61,25 @@ public class ParserTest {
 
 		assertThat(entity).satisfies(e -> {
 			assertThat(e).isInstanceOf(Sale.class);
-			assertThat(((Sale) e).getId()).isEqualTo("10");
-			assertThat(((Sale) e).getSalesmanName()).isEqualTo("Pedro");
+			assertThat(((Sale) e).id()).isEqualTo("10");
+			assertThat(((Sale) e).salesmanName()).isEqualTo("Pedro");
 
-			assertThat(((Sale) e).getItems()).element(0).satisfies(first -> {
-				assertThat(first.getId()).isEqualTo("1");
-				assertThat(first.getPrice()).isEqualByComparingTo(new BigDecimal("100"));
-				assertThat(first.getQuantity()).isEqualTo(10);
+			assertThat(((Sale) e).items()).element(0).satisfies(first -> {
+				assertThat(first.id()).isEqualTo("1");
+				assertThat(first.price()).isEqualByComparingTo(new BigDecimal("100"));
+				assertThat(first.quantity()).isEqualTo(10);
 			});
 
-			assertThat(((Sale) e).getItems()).element(1).satisfies(second -> {
-				assertThat(second.getId()).isEqualTo("2");
-				assertThat(second.getPrice()).isEqualByComparingTo(new BigDecimal("2.5"));
-				assertThat(second.getQuantity()).isEqualTo(30);
+			assertThat(((Sale) e).items()).element(1).satisfies(second -> {
+				assertThat(second.id()).isEqualTo("2");
+				assertThat(second.price()).isEqualByComparingTo(new BigDecimal("2.5"));
+				assertThat(second.quantity()).isEqualTo(30);
 			});
 
-			assertThat(((Sale) e).getItems()).element(2).satisfies(third -> {
-				assertThat(third.getId()).isEqualTo("3");
-				assertThat(third.getPrice()).isEqualByComparingTo(new BigDecimal("3.1"));
-				assertThat(third.getQuantity()).isEqualTo(40);
+			assertThat(((Sale) e).items()).element(2).satisfies(third -> {
+				assertThat(third.id()).isEqualTo("3");
+				assertThat(third.price()).isEqualByComparingTo(new BigDecimal("3.1"));
+				assertThat(third.quantity()).isEqualTo(40);
 			});
 		});
 	}

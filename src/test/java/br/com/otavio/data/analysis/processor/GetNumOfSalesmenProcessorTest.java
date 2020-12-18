@@ -24,24 +24,23 @@ public class GetNumOfSalesmenProcessorTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
-	private @Mock GroupedData data;
 
 	private Processor processor;
 
 	@BeforeEach
 	public void setup() {
+		final Salesman s1 = new Salesman("A", "B", BigDecimal.ONE);
+		final Salesman s2 = new Salesman("D", "E", BigDecimal.ONE);
+		final Salesman s3 = new Salesman("G", "H", BigDecimal.ONE);
+
+		when(in.getBody(GroupedData.class)).thenReturn(new GroupedData(List.of(), List.of(), List.of(s1, s2, s3)));
+
 		when(exchange.getIn()).thenReturn(in);
-		when(in.getBody(GroupedData.class)).thenReturn(data);
 		processor = new GetNumOfSalesmenProcessor();
 	}
 
 	@Test
 	public void shouldSetResultIntoHeader() throws Exception {
-		final Salesman s1 = new Salesman("A", "B", BigDecimal.ONE);
-		final Salesman s2 = new Salesman("D", "E", BigDecimal.ONE);
-		final Salesman s3 = new Salesman("G", "H", BigDecimal.ONE);
-		when(data.getSalesmen()).thenReturn(List.of(s1, s2, s3));
-
 		processor.process(exchange);
 
 		verify(in).setHeader(Headers.NUM_OF_SALESMEN, 3);

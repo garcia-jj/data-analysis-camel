@@ -25,25 +25,23 @@ public class GetMostExpensiveSaleProcessorTest {
 
 	private @Mock Exchange exchange;
 	private @Mock Message in;
-	private @Mock GroupedData data;
 
 	private Processor processor;
 
 	@BeforeEach
 	public void setup() {
 		when(exchange.getIn()).thenReturn(in);
-		when(in.getBody(GroupedData.class)).thenReturn(data);
+
+		final Sale sale1 = new Sale("A", List.of(new SaleItem("A0", 1, new BigDecimal("5")), new SaleItem("A2", 2, new BigDecimal("10"))), "Franklin");
+		final Sale sale2 = new Sale("B", List.of(new SaleItem("A0", 1, new BigDecimal("5"))), "Theodore");
+		when(in.getBody(GroupedData.class)).thenReturn(new GroupedData(List.of(), List.of(sale1, sale2), List.of()));
+
 		processor = new GetMostExpensiveSaleProcessor();
 	}
 
 	@Test
 	public void shouldSetResultIntoHeader() throws Exception {
-		final Sale sale1 = new Sale("A", List.of(new SaleItem("A0", 1, new BigDecimal("5")), new SaleItem("A2", 2, new BigDecimal("10"))), "Franklin");
-		final Sale sale2 = new Sale("B", List.of(new SaleItem("A0", 1, new BigDecimal("5"))), "Theodore");
-		when(data.getSales()).thenReturn(List.of(sale1, sale2));
-
 		processor.process(exchange);
-
 		verify(in).setHeader(Headers.MOST_EXPENSIVE_SALE, "A");
 	}
 }

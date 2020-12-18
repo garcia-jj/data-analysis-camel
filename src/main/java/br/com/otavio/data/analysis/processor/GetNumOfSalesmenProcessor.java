@@ -12,7 +12,7 @@ public class GetNumOfSalesmenProcessor implements Processor {
 	public void process(final Exchange exchange) throws Exception {
 		final GroupedData records = exchange.getIn().getBody(GroupedData.class);
 
-		final int numOfSalesmen = records.getSalesmen().size();
+		final int numOfSalesmen = records.salesmen().size();
 		exchange.getIn().setHeader(Headers.NUM_OF_SALESMEN, numOfSalesmen);
 	}
 }
